@@ -25,6 +25,10 @@ private slots:
 
     void on_export_dfa_button_clicked();
 
+    void on_mini_dfa_button_clicked();
+
+    void on_action_about_triggered();
+
 private:
     Ui::MainWindow *ui;
 };

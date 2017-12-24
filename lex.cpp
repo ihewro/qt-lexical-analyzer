@@ -5,7 +5,7 @@
 #include <vector>
 #include<fstream>
 #include<iomanip>
-#include <QProcess>
+//#include <QProcess>
 
 using namespace std;
 
@@ -249,76 +249,76 @@ void Lex::getNFA(string regxInput){
         //如果是运算符
         if(isOperator(ch)){
             switch (ch) {
-            case '*'://重复符优先级别第一
-                cout << "ok*" << ch << endl;
-                //计算结果压入NFA栈中
-                repeatCharacterOperation();
+                case '*'://重复符优先级别第一
+                    cout << "ok*" << ch << endl;
+                    //计算结果压入NFA栈中
+                    repeatCharacterOperation();
 
-                //如果下一个字符是字母或者是左括号，需要添加连接符
-                if((i+1<strLen)&&(regxInput[i+1] == '(' || !isOperator(regxInput[i+1]))){
-                    operatorStack.push('&');
-                }
+                    //如果下一个字符是字母或者是左括号，需要添加连接符
+                    if((i+1<strLen)&&(regxInput[i+1] == '(' || !isOperator(regxInput[i+1]))){
+                        operatorStack.push('&');
+                    }
 
-                break;
-            case '|'://选择符优先级第三，可以省略不写
-                //需要将运算符栈符号中的&出栈并计算，遇到左括号(停止
-                if (operatorStack.empty()){
-                    cout<<"运算符栈为空"<< endl;
-                    //如果运算符栈为空，就什么事情也不用做，最后一下把该符号压栈就可以了
-                }else{
-                    cout<<"运算符栈不为空"<< endl;
+                    break;
+                case '|'://选择符优先级第三，可以省略不写
+                    //需要将运算符栈符号中的&出栈并计算，遇到左括号(停止
+                    if (operatorStack.empty()){
+                        cout<<"运算符栈为空"<< endl;
+                        //如果运算符栈为空，就什么事情也不用做，最后一下把该符号压栈就可以了
+                    }else{
+                        cout<<"运算符栈不为空"<< endl;
+                        ch = operatorStack.top();
+                        cout << "当前栈顶元素为" << ch << endl;
+                        while(ch != '('){
+                            //cout << "loop" << endl;
+                            if(ch == '&'){
+                                cout << "栈顶元素为连接符，需要先进行连接符的计算" << endl;
+                                joinerCharacterOperation();
+                            } else{
+                                break;
+                            }
+                            ch = operatorStack.top();
+                        }
+                    }
+
+                    operatorStack.push('|');
+                    cout<<"将选择符压入栈中"<<endl;
+                    break;
+                case '('://左括号
+                    operatorStack.push(ch);
+                    cout << "将左括号压入栈中" << endl;
+                    cout << "当前符号栈大小" << operatorStack.size() << endl;
+                    break;
+                case ')'://右括号
+                    cout << "符号栈大小" << operatorStack.size() << endl;
+                    //这里需要对括号内进行计算，并把计算结果压栈
                     ch = operatorStack.top();
-                    cout << "当前栈顶元素为" << ch << endl;
+
                     while(ch != '('){
-                        //cout << "loop" << endl;
-                        if(ch == '&'){
-                            cout << "栈顶元素为连接符，需要先进行连接符的计算" << endl;
-                            joinerCharacterOperation();
-                        } else{
-                            break;
+                        //cout << "loop2";
+                        switch (ch) {
+                            case '&':
+                                joinerCharacterOperation();
+                                break;
+                            case '|':
+                                selectorCharacterOperation();
+                                break;
+                            default:
+                                break;
                         }
                         ch = operatorStack.top();
                     }
-                }
-
-                operatorStack.push('|');
-                cout<<"将选择符压入栈中"<<endl;
-                break;
-            case '('://左括号
-                operatorStack.push(ch);
-                cout << "将左括号压入栈中" << endl;
-                cout << "当前符号栈大小" << operatorStack.size() << endl;
-                break;
-            case ')'://右括号
-                cout << "符号栈大小" << operatorStack.size() << endl;
-                //这里需要对括号内进行计算，并把计算结果压栈
-                ch = operatorStack.top();
-
-                while(ch != '('){
-                    //cout << "loop2";
-                    switch (ch) {
-                    case '&':
-                        joinerCharacterOperation();
-                        break;
-                    case '|':
-                        selectorCharacterOperation();
-                        break;
-                    default:
-                        break;
+                    cout << "顶部符号" << ch << endl;
+                    operatorStack.pop();//此时运算符栈顶元素是左括号，需要移除出去
+                    //如果下一个字符是字母或者是左括号，需要添加连接符
+                    if((i+1<strLen)&&(regxInput[i+1] == ')' || !isOperator(regxInput[i+1]))){
+                        operatorStack.push('&');
                     }
-                    ch = operatorStack.top();
-                }
-                cout << "顶部符号" << ch << endl;
-                operatorStack.pop();//此时运算符栈顶元素是左括号，需要移除出去
-                //如果下一个字符是字母或者是左括号，需要添加连接符
-                if((i+1<strLen)&&(regxInput[i+1] == ')' || !isOperator(regxInput[i+1]))){
-                    operatorStack.push('&');
-                }
-                break;
+                    break;
 
-            default:
-                cout << "ok" << ch << endl;
-                break;
+                default:
+                    cout << "ok" << ch << endl;
+                    break;
             }
         }else{//不是运算符
             auto flag = true;//是否添加到字母表中
@@ -334,7 +334,7 @@ void Lex::getNFA(string regxInput){
             createBasicNFA(ch);
 
             //如果下一个字符是字母的话，就向符号栈中加入一个连接符&
-            if(i+1 <strLen && !isOperator(regxInput[i+1])){
+            if(i+1 <strLen && (!isOperator(regxInput[i+1]) || regxInput[i+1] == '(')){
                 operatorStack.push('&');
             }
         }
@@ -351,14 +351,14 @@ void Lex::getNFA(string regxInput){
         ch= operatorStack.top();
         cout << "当前的运算符栈顶元素为" << ch << endl;
         switch (ch) {
-        case '|':
-            selectorCharacterOperation();
-            break;
-        case '&':
-            joinerCharacterOperation();
-            break;
-        default:
-            break;
+            case '|':
+                selectorCharacterOperation();
+                break;
+            case '&':
+                joinerCharacterOperation();
+                break;
+            default:
+                break;
         }
     }
 
@@ -397,6 +397,9 @@ void Lex::getDFA() {
 
             vector<int> tempArray = e_closure(nfaMove(lexDFA.mVexs[topDFAStack],alphabet[i]));
 
+            if (tempArray.empty()){//如果转换产生的NFA集合为空，跳过该次转换即可
+                continue;
+            }
             int position = isDFAStatusRepeat(tempArray);//判断新生成DFA状态是否已经存在了，如果已经存在，返回该状态在节点的位置
 
             if (position == -1){//这个是新生成的DFA状态，没有重复
@@ -459,7 +462,7 @@ int Lex::isDFAStatusRepeat(vector<int> a){
  */
 vector<int> Lex::e_closure(vector<int> statusArray){
 
-    cout << "————————————————开始e_closure函数————————————————"<<endl;
+    cout << "————————————————开始e_closure(T)函数————————————————"<<endl;
     cout << "状态数组为:" << endl;
     for (int k = 0; k < statusArray.size(); ++k) {
         cout << statusArray[k] << " ";
@@ -515,7 +518,7 @@ vector<int> Lex::e_closure(vector<int> statusArray){
  */
 vector<int> Lex::nfaMove(vector<int> statusArray,char condition){
 
-    cout << "————————————————开始move函数————————————————"<<endl;
+    cout << "————————————————开始move(T," << condition << ")函数————————————————"<<endl;
 
     cout<< "状态数组为" << endl;
     for (int k = 0; k < statusArray.size(); ++k) {
@@ -626,34 +629,32 @@ string Lex::generateNFADotString(MyGraph myGraph){
 
 }
 
-string Lex::generateDFADotString(MyGraph myGraph){
+string Lex::generateDFADotString(MyGraph myGraph,int choice){
 
     string tab = "    ";
     string result;
     result = "digraph G{\n" + tab + "\"\"[shape=none]\n";
     for (int i = 1; i <myGraph.mVexNum + 1 ; ++i) {
-        result += tab + "\"" + to_string(i) +  "\"";
-         //ofile<<tab<<"\""<<to_string(i)<<"\"";
-        bool flag = true;
 
-        for (int j = 0; j < lexDFA.endStatus.size(); ++j) {
-            if (i == lexDFA.endStatus[j]){
-                flag = false;
-                break;
+        if (!lexDFA.mVexs[i].empty()){
+            result += tab + "\"" + to_string(i) +  "\"";
+            bool flag = true;
+
+            for (int j = 0; j < lexDFA.endStatus.size(); ++j) {
+                if (i == lexDFA.endStatus[j]){
+                    flag = false;
+                    break;
+                }
             }
+            if (!flag){
+                result += "[shape=doublecircle]\n";
+            }else{
+                result += "[shape=circle]\n";
+            };
         }
-        if (!flag){
-            //ofile << "[shape=doublecircle]\n";
-            result += "[shape=doublecircle]\n";
-        }else{
-            //ofile << "[shape=circle]\n";
-            result += "[shape=circle]\n";
-        };
     }
 
-    //ofile<< endl;
     result += "\n";
-    //ofile << tab << "\"\"->\"" + to_string(lexDFA.startStatus)+ "\"\n";
     result += tab + "\"\"->\"" + to_string(lexDFA.startStatus)+ "\"\n";
 
     int num = myGraph.mVexNum + 1;
@@ -661,18 +662,247 @@ string Lex::generateDFADotString(MyGraph myGraph){
     for(int i = 0 ;i<num  ;i ++){
         for(int j = 0;j<num;j++){
             if (myGraph.getEdgeValue(i,j) != '^'){
-                result += tab + "\"" +to_string(i) + "\"" + " -> " + to_string(j) + "[label=\"" + myGraph.getEdgeValue(i,j) + "\"]\n";
+                result += tab + "\"" +to_string(i) + "\"" + " -> \"" + to_string(j) + "\"[label=\"" + myGraph.getEdgeValue(i,j) + "\"]\n";
             }
         }
     }
     result.append("}");
-    ofstream ofile;               //定义输出文件
-    ofile.open("/Users/hewro/lexical/dots/dfa.dot");
+    ofstream ofile;//定义输出文件
+    if (choice == 0){
+        ofile.open("/Users/hewro/lexical/dots/dfa.dot");
+    }else{
+        ofile.open("/Users/hewro/lexical/dots/mindfa.dot");
+    }
     ofile << result << endl;
     ofile.close();
     //执行生成dfa图片
-    system("/usr/local/bin/dot -Tjpg /Users/hewro/lexical/dots/dfa.dot -o /Users/hewro/lexical/images/dfa.jpg");//调用QT里的函数
+    if (choice == 0){
+        system("/usr/local/bin/dot -Tjpg /Users/hewro/lexical/dots/dfa.dot -o /Users/hewro/lexical/images/dfa.jpg");//调用QT里的函数
+    }else{
+        system("/usr/local/bin/dot -Tjpg /Users/hewro/lexical/dots/mindfa.dot -o /Users/hewro/lexical/images/mindfa.jpg");//调用QT里的函数
+    }
     cout << result << endl;
     return result;
 
 }
+
+
+/**
+ * 最小化DFA
+ */
+
+bool isContain(int a, vector<int> b){
+    for (int i = 0; i <b.size() ; ++i) {
+        if (a == b[i])
+            return true;
+    }
+    return false;
+}
+
+/**
+ * 判断某个DFA状态在划分的集合中的序号
+ * @param a
+ * @param b
+ * @return
+ */
+int getContainPosition(int a, vector<pair<vector<int>,bool>> b) {
+    for (int i = 0; i <b.size() ; ++i) {
+        for (int j = 0; j <b[i].first.size() ; ++j) {
+            if (a == b[i].first[j]){
+                return i;
+            }
+        }
+    }
+    return -1;
+}
+
+
+
+void Lex::minimizeDFA() {
+    cout << "——————————————————————最小化DFA——————————————————" << endl;
+
+
+    vector<int> noEndPointArray;//非终止态节点集合
+    vector<int> endPointArray(lexDFA.endStatus);
+
+    /*stack<int>noEndDFAStack;//DFA的非终止状态栈
+    stack<int> endDFAStack;//终止状态的栈*/
+    cout << "非终止状态集合" << endl;
+    for (int i = 1; i < lexDFA.mVexs.size(); ++i) {
+        if (!isInDFAEndStatus(i)){
+            noEndPointArray.push_back(i);
+            cout << i << " ";
+            //noEndDFAStack.push(i);
+        }
+    }//初始化非终止节点集合
+    cout << endl;
+
+    cout << "终止状态集合" << endl;
+    for (int n = 0; n < endPointArray.size(); ++n) {
+        cout << endPointArray[n] << " ";
+    }
+    cout << endl;
+    vector<pair<vector<int>,bool>> dividedArrays;//first存储的是划分的集合，second存储的是该划分集合是否可继续划分
+    dividedArrays.emplace_back(noEndPointArray, true);
+    dividedArrays.emplace_back(endPointArray, true);
+
+    bool flag = true;
+    while(flag){
+
+        for (int j = 0; j < dividedArrays.size(); ++j) {//对划分的每个集合进行操作
+
+            cout << "——————————当前操作的集合为——————————" <<endl;
+            for (int m = 0; m < dividedArrays[j].first.size(); ++m) {
+                cout << dividedArrays[j].first[m] << " ";
+            }
+            cout << endl;
+
+            int canNotBeDivided = 0;//经过一次字母表的转换，如果该集合的转换状态只有一个，说明该集合不能被该字母区分，该变量+1
+
+            if (dividedArrays[j].first.size() == 1){
+                dividedArrays[j].second = false;//如果集合元素只有一个，赋值为false，即不可再划分
+                continue;
+            }
+
+            for (int i = 0; i < alphabet.size() ; ++i) {
+
+                vector<int> arrayNumVector;//存放DFA状态经过某个字母转换到的集合序号的数组
+
+                //first 为转换状态属于的集合序号，second DFA起点的状态节点
+                vector<pair<int,int>> statusMap;//存放了每个节点的转换后属于的集合序号——该节点本身序号
+
+                for (int k = 0; k < dividedArrays[j].first.size(); ++k) { //获取到该集合的每个元素的转换状态属于的集合序号
+                    int transStatus = lexDFA.getTargetStatus(dividedArrays[j].first[k],alphabet[i]);//获取节点的转换DFA节点
+
+                    int statusInArrayNum = getContainPosition(transStatus,dividedArrays);//转换状态属于的集合序号
+
+                    if(statusInArrayNum == -1){//必须进行划分，这个时候虽然没有转换结果，所以需要将集合序号人为设置一个唯一的数
+                        statusInArrayNum = static_cast<int>(statusMap.size() + 1);
+                    }
+
+                    if (!isContain(statusInArrayNum,arrayNumVector)){//防止集合序号的重复
+                        arrayNumVector.push_back(statusInArrayNum);//将集合序号加入到集合序号数组中
+                    }
+                    statusMap.emplace_back(statusInArrayNum,dividedArrays[j].first[k]);//将集合序号————对于的DFA状态组压入
+                }
+
+                if (arrayNumVector.size() == 1){
+                    canNotBeDivided ++ ;
+
+                    continue;
+                }else{
+                    cout << "\n*******该集合需要划分*******\n"<< endl;
+
+                    cout << "划分的集合为：" << endl;
+                    for (int l = 0; l <  arrayNumVector.size(); ++l) {//进行划分
+                        cout << "第" << l + 1 << "个划分的子集为" << endl;
+                        vector<int> tempArray;
+                        for (int k = 0; k < statusMap.size(); ++k) {
+                            if (statusMap[k].first == arrayNumVector[l]){//根据集合序号进行划分
+                                tempArray.push_back(statusMap[k].second);
+                                cout << statusMap[k].second << " " ;
+                            }
+                        }
+                        cout << endl;
+                        dividedArrays.emplace_back(tempArray, true);
+                    }
+
+                    auto iter =  dividedArrays.begin()+j;
+                    dividedArrays.erase(iter);
+                    j--;
+                }
+            }
+            if (canNotBeDivided == alphabet.size()){
+                dividedArrays[j].second = false;//如果一个集合经过转换后还是该集合本身，该集合无需再进行划分
+            }
+        }
+
+
+        //判断是否结束循环，如果划分集合下面的所有集合都不可划分就退出循环
+        flag = false;
+        for (int m = 0; m < dividedArrays.size(); ++m) {
+            if (dividedArrays[m].second == true){
+                flag = true;
+                break;
+            }
+        }
+    }
+
+    //输出打印最后的集合
+
+    cout << "——————————————————最终的划分集合为——————————————————————" << endl;
+    for (int i1 = 0; i1 < dividedArrays.size(); ++i1) {
+        for (int i = 0; i < dividedArrays[i1].first.size() ; ++i) {
+            cout << dividedArrays[i1].first[i] << " ";
+        }
+        cout << endl;
+    }
+
+
+    //合并DFA等价状态
+
+    for (int j1 = 0; j1 < dividedArrays.size(); ++j1) {
+        if (dividedArrays[j1].first.size() > 1){//只要每个集合的大小大于1，说明有需要合并的
+            int represent = dividedArrays[j1].first[0];
+            for (int i = 1; i < dividedArrays[j1].first.size(); ++i) {//除了第一个节点，其他节点都和第一个节点合并
+                mergeTwoNode(represent,dividedArrays[j1].first[i]);//合并这两个节点
+            }
+        }
+    }
+
+
+
+}
+
+/**
+ * 获取DFA的目标节点
+ * @param node
+ * @param condition
+ * @return
+ */
+int DFA::getTargetStatus(int node, char condition) {
+    for (int i = 0; i < mVexs.size() ; ++i) {
+        if (DFAGraph.getEdgeValue(node,i) == condition){
+            return i;
+        }
+    }
+    return -1;//表示目标节点不存在
+}
+
+
+void Lex::mergeTwoNode(int a,int b){
+    for (int i = 1; i < lexDFA.mVexs.size()+1 ; ++i) {
+        if (i == b){
+            for (int j = 1; j < lexDFA.mVexs.size()+1 ; ++j) {
+                if (lexDFA.DFAGraph.getEdgeValue(b,j) != '^'){
+                    if (j == b){
+                        lexDFA.DFAGraph.addEdge(a,a,lexDFA.DFAGraph.getEdgeValue(b,j));
+                    } else{
+                        lexDFA.DFAGraph.addEdge(a,j,lexDFA.DFAGraph.getEdgeValue(b,j));
+                    }
+                    lexDFA.DFAGraph.deleteEdge(b,j);
+                    lexDFA.mVexs[b] = vector<int>();
+                }
+            }
+        } else{
+            for (int j = 1; j < lexDFA.mVexs.size() + 1; ++j) {
+                if (j == b && lexDFA.DFAGraph.getEdgeValue(i,b)!='^'){
+                    lexDFA.DFAGraph.addEdge(i,a,lexDFA.DFAGraph.getEdgeValue(i,b));
+                    lexDFA.DFAGraph.deleteEdge(i,j);
+                    lexDFA.mVexs[b] = vector<int>();
+                    break;
+                }
+            }
+        }
+    }
+};
+
+
+bool Lex::isInDFAEndStatus(int i){
+    for (int j = 0; j < lexDFA.endStatus.size(); ++j) {
+        if (i == lexDFA.endStatus[j]){
+            return true;
+        }
+    }
+    return false;
+};

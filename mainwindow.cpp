@@ -5,6 +5,8 @@
 #include <string>
 #include <iostream>
 #include <stdio.h>
+#include <QProcess>
+#include <QMessageBox>
 
 using namespace std;
 
@@ -59,7 +61,13 @@ void MainWindow::on_pushButton_clicked()
 
     cout << "DFA节点数目" << lexTest.lexDFA.DFAGraph.mVexNum << "边的数目" << lexTest.lexDFA.DFAGraph.mEdgeNum << endl;
 
-    lexTest.generateDFADotString(lexTest.lexDFA.DFAGraph);
+    lexTest.generateDFADotString(lexTest.lexDFA.DFAGraph,0);
+
+    lexTest.minimizeDFA();
+    //system("dot -Tjpg aaa.dot -o aaa.jpg");
+
+    lexTest.generateDFADotString(lexTest.lexDFA.DFAGraph,1);
+
 }
 
 
@@ -85,5 +93,21 @@ void MainWindow::on_export_dfa_button_clicked()
     format.setName("/Users/hewro/lexical/images/dfa.jpg");
     ui->textBrowser->clear();
     ui->textBrowser->textCursor().insertImage(format);
+}
+
+void MainWindow::on_mini_dfa_button_clicked()
+{
+    //输出最小化DFA
+    QTextImageFormat format;
+    format.setName("/Users/hewro/lexical/images/mindfa.jpg");
+    ui->textBrowser->clear();
+    ui->textBrowser->textCursor().insertImage(format);
+
+}
+
+void MainWindow::on_action_about_triggered()
+{
+    //打开关于对话框
+    QMessageBox::about(this,"关于","生成NFA、DFA、最小化DFA的可视化工具");
 
 }

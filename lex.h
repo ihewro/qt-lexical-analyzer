@@ -1,6 +1,14 @@
 #ifndef LEX_H
 #define LEX_H
 
+//
+// Created by hewro on 2017/12/19.
+//
+
+#ifndef LEXCODE_LEX_H
+#define LEXCODE_LEX_H
+
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -11,7 +19,7 @@ using namespace std;
 
 class NFA{
 public:
-    vector<int> mVexs;//DFA节点集合，存储的是节点的序号
+    vector<int> mVexs;//DFA节点集合，存储的是节点的序号,位置的信息并没有存储内容，和DFA的节点集合不一样
     MyGraph NFAGraph;//NFA图的结构
 
     int startStatus;//开始状态的序号
@@ -26,11 +34,13 @@ public:
 class DFA{
 public:
     vector<vector<int>> mVexs;//值为对于的NFA集合,位置为节点序号
-
     MyGraph DFAGraph;//DFA图的结构
-
     int startStatus;//开始状态
     vector <int> endStatus;//可能有多个终止状态
+
+    //获取与某个节点相连的节点，转换条件确定
+    int getTargetStatus(int node, char condition);
+
 
 };
 
@@ -80,13 +90,21 @@ public:
     vector<int> nfaMove(vector<int> statusArray,char condition);
     int isDFAStatusRepeat(vector<int> a);
 
-    string generateDFADotString(MyGraph myGraph);
+    string generateDFADotString(MyGraph myGraph,int choice);
     //判断是否是终止状态
     bool isEndDFAStatus(vector<int> nfaArray);
     //打印DFA的连接表
     void printDFA();
 
-
+    /*最小化DFA*/
+    void minimizeDFA();
+    //判断节点序号是否在DFA终止节点集合中
+    bool isInDFAEndStatus(int i);
+    //合并两个节点
+    void mergeTwoNode(int a, int b);
 };
+
+#endif //LEXCODE_LEX_H
+
 
 #endif // LEX_H
