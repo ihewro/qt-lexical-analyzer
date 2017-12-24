@@ -79,7 +79,7 @@ void MainWindow::on_export_nfa_button_clicked()
 {
     //加载图片
     QTextImageFormat format;
-    format.setName("/Users/hewro/lexical/images/nfa.jpg");
+    format.setName("../../../../lexical/images/nfa.jpg");
     ui->textBrowser->clear();
     ui->textBrowser->textCursor().insertImage(format);
 
@@ -90,7 +90,7 @@ void MainWindow::on_export_dfa_button_clicked()
 {
     //加载图片
     QTextImageFormat format;
-    format.setName("/Users/hewro/lexical/images/dfa.jpg");
+    format.setName("../../../../lexical/images/dfa.jpg");
     ui->textBrowser->clear();
     ui->textBrowser->textCursor().insertImage(format);
 }
@@ -99,7 +99,7 @@ void MainWindow::on_mini_dfa_button_clicked()
 {
     //输出最小化DFA
     QTextImageFormat format;
-    format.setName("/Users/hewro/lexical/images/mindfa.jpg");
+    format.setName("../../../../lexical/images/mindfa.jpg");
     ui->textBrowser->clear();
     ui->textBrowser->textCursor().insertImage(format);
 

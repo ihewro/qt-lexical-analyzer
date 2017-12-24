@@ -619,11 +619,11 @@ string Lex::generateNFADotString(MyGraph myGraph){
     result.append("}");
 
     ofstream ofile;               //定义输出文件
-    ofile.open("/Users/hewro/lexical/dots/nfa.dot");
+    ofile.open("../../../../lexical/dots/nfa.dot");
     ofile << result << endl;
     ofile.close();
     //执行生成nfa图片
-    system("/usr/local/bin/dot -Tjpg /Users/hewro/lexical/dots/nfa.dot -o /Users/hewro/lexical/images/nfa.jpg");//调用QT里的函数
+    system("/usr/local/bin/dot -Tjpg ../../../../lexical/dots/nfa.dot -o ../../../../lexical/images/nfa.jpg");//调用QT里的函数
     cout << result << endl;
     return  result;
 
@@ -669,17 +669,18 @@ string Lex::generateDFADotString(MyGraph myGraph,int choice){
     result.append("}");
     ofstream ofile;//定义输出文件
     if (choice == 0){
-        ofile.open("/Users/hewro/lexical/dots/dfa.dot");
+        system("pwd");
+        ofile.open("../../../../lexical/dots/dfa.dot");
     }else{
-        ofile.open("/Users/hewro/lexical/dots/mindfa.dot");
+        ofile.open("../../../../lexical/dots/mindfa.dot");
     }
     ofile << result << endl;
     ofile.close();
     //执行生成dfa图片
     if (choice == 0){
-        system("/usr/local/bin/dot -Tjpg /Users/hewro/lexical/dots/dfa.dot -o /Users/hewro/lexical/images/dfa.jpg");//调用QT里的函数
+        system("/usr/local/bin/dot -Tjpg ../../../../lexical/dots/dfa.dot -o ../../../../lexical/images/dfa.jpg");//调用QT里的函数
     }else{
-        system("/usr/local/bin/dot -Tjpg /Users/hewro/lexical/dots/mindfa.dot -o /Users/hewro/lexical/images/mindfa.jpg");//调用QT里的函数
+        system("/usr/local/bin/dot -Tjpg ../../../../lexical/dots/mindfa.dot -o ../../../../lexical/images/mindfa.jpg");//调用QT里的函数
     }
     cout << result << endl;
     return result;
