@@ -14,6 +14,8 @@
 #include <vector>
 #include <stack>
 #include "mygraph.h"
+#include <QtWidgets/QTextBrowser>
+
 using namespace std;
 
 
@@ -55,6 +57,7 @@ public:
 };
 class Lex{
 public:
+    QTextBrowser *resultBrowser;//结果输出框
     NFA lexNFA;//NFA结构
     DFA lexDFA;//DFA结构
     stack <char> operatorStack;//操作符栈
@@ -64,6 +67,8 @@ public:
     //构造函数
     Lex();
 
+    void insetIntoResultBox(string content);
+    void appendToResultBox(string content);
     /*获取NFA*/
 
     void getNFA(string regxInput);

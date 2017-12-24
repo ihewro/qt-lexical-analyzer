@@ -6,6 +6,7 @@
 #include<fstream>
 #include<iomanip>
 //#include <QProcess>
+#include <sstream>
 
 using namespace std;
 
@@ -21,12 +22,15 @@ bool Lex::isOperator(char ch){
 }
 
 void Lex::createBasicNFA(char ch){
+    appendToResultBox("根据字母创建最基本NFA的操作");
     cout << "根据字母创建最基本NFA的操作" << endl;
     //分配的节点序号是以前节点序号+1
     int startPoint = lexNFA.mVexs.size() + 1;
     int endPoint = startPoint + 1;
     lexNFA.NFAGraph.addEdge(startPoint,endPoint,ch);//增加一个边对边的连接，边的条件是转换条件，就是该字符。
-    cout << "开始创建一个最基本的 NFA,序号为：(" << startPoint << "," << endPoint << ")" << endl;
+    string tempString = "开始创建一个最基本的 NFA,序号为：(" + to_string(startPoint) + "," + to_string(endPoint) + ")";
+    appendToResultBox(tempString);
+    cout << tempString<< endl;
     //增加两个节点
     lexNFA.NFAGraph.mVexNum = lexNFA.NFAGraph.mVexNum+2;
     //边数加1
@@ -57,6 +61,8 @@ void Lex::createBasicNFA(char ch){
  */
 void Lex::repeatCharacterOperation(){
     cout << "进行重复符的操作" << endl;
+    insetIntoResultBox("\n进行重复符的操作");
+
     //1.获取栈顶的一个元素
     int top1NFA[2];
     for(int i =0;i<2;i++){
@@ -109,6 +115,7 @@ void Lex::joinerCharacterOperation(){
      */
 
     cout << "\n进行连接符的操作\n" << endl;
+    appendToResultBox("进行连接符的操作");
     //1.
     //获取NFA栈顶的两个元素，并从栈中丢掉
     int top1NFA[2];
@@ -121,8 +128,13 @@ void Lex::joinerCharacterOperation(){
         top2NFA[i] = NFAStatusPointStack.top().nArray[i];
     }
     NFAStatusPointStack.pop();
-    cout << "前节点序号:(" << top2NFA[0] << "," << top2NFA[1] << ")" << endl;
-    cout << "后节点序号:(" << top1NFA[0] << "," << top1NFA[1] << ")" << endl;
+    string frontNode = "前节点序号:(" + to_string(top2NFA[0]) + "," + to_string(top2NFA[1])+ ")";
+    string lateNode = "后节点序号:(" + to_string(top1NFA[0]) + "," + to_string(top1NFA[1]) + ")";
+    cout << frontNode << endl;
+    cout << lateNode << endl;
+    appendToResultBox(frontNode);
+    appendToResultBox(lateNode);
+
     cout << endl;
     //获取运算符栈顶的元素，并从栈中丢掉，因为运算完，这些就没用了，有用的是运算结果
     operatorStack.pop();
@@ -181,6 +193,7 @@ void Lex::joinerCharacterOperation(){
  */
 void Lex::selectorCharacterOperation(){
     cout << "进行选择符的操作" << endl;
+    appendToResultBox("进行选择符的操作");
     //1.
     //获取NFA栈顶的两个元素，并从栈中丢掉
     int top1NFA[2];
@@ -241,84 +254,91 @@ void Lex::getNFA(string regxInput){
     unsigned long strLen = regxInput.length();
     char ch;
 
-    cout<< "字符串为:" << regxInput << "字符串的长度为:" << strLen << endl;
+    string tempString = "字符串为:" + regxInput + "字符串的长度为:";
+    cout<< tempString << endl;
+    appendToResultBox(tempString);
     /*1. 对输入的正则表达式进行循环扫描每一个元素，建立运算符栈和NFA栈*/
     for(unsigned long i =0; i < strLen; i++){
         ch = regxInput[i];
-        cout<< "\n*************当前字符为 " << ch << " *************\n" << endl;
+        stringstream stream2;
+        stream2 << ch;
+        string str = stream2.str();
+        tempString = "\n*************当前字符为 " + str + " *************\n";
+        cout<< "\n*************当前字符为 " << str << " *************\n" << endl;
+        appendToResultBox(tempString);
         //如果是运算符
         if(isOperator(ch)){
             switch (ch) {
-                case '*'://重复符优先级别第一
-                    cout << "ok*" << ch << endl;
-                    //计算结果压入NFA栈中
-                    repeatCharacterOperation();
+            case '*'://重复符优先级别第一
+                cout << "ok*" << ch << endl;
+                //计算结果压入NFA栈中
+                repeatCharacterOperation();
 
-                    //如果下一个字符是字母或者是左括号，需要添加连接符
-                    if((i+1<strLen)&&(regxInput[i+1] == '(' || !isOperator(regxInput[i+1]))){
-                        operatorStack.push('&');
-                    }
+                //如果下一个字符是字母或者是左括号，需要添加连接符
+                if((i+1<strLen)&&(regxInput[i+1] == '(' || !isOperator(regxInput[i+1]))){
+                    operatorStack.push('&');
+                }
 
-                    break;
-                case '|'://选择符优先级第三，可以省略不写
-                    //需要将运算符栈符号中的&出栈并计算，遇到左括号(停止
-                    if (operatorStack.empty()){
-                        cout<<"运算符栈为空"<< endl;
-                        //如果运算符栈为空，就什么事情也不用做，最后一下把该符号压栈就可以了
-                    }else{
-                        cout<<"运算符栈不为空"<< endl;
-                        ch = operatorStack.top();
-                        cout << "当前栈顶元素为" << ch << endl;
-                        while(ch != '('){
-                            //cout << "loop" << endl;
-                            if(ch == '&'){
-                                cout << "栈顶元素为连接符，需要先进行连接符的计算" << endl;
-                                joinerCharacterOperation();
-                            } else{
-                                break;
-                            }
-                            ch = operatorStack.top();
-                        }
-                    }
-
-                    operatorStack.push('|');
-                    cout<<"将选择符压入栈中"<<endl;
-                    break;
-                case '('://左括号
-                    operatorStack.push(ch);
-                    cout << "将左括号压入栈中" << endl;
-                    cout << "当前符号栈大小" << operatorStack.size() << endl;
-                    break;
-                case ')'://右括号
-                    cout << "符号栈大小" << operatorStack.size() << endl;
-                    //这里需要对括号内进行计算，并把计算结果压栈
+                break;
+            case '|'://选择符优先级第三，可以省略不写
+                //需要将运算符栈符号中的&出栈并计算，遇到左括号(停止
+                if (operatorStack.empty()){
+                    cout<<"运算符栈为空"<< endl;
+                    //如果运算符栈为空，就什么事情也不用做，最后一下把该符号压栈就可以了
+                }else{
+                    cout<<"运算符栈不为空"<< endl;
                     ch = operatorStack.top();
-
+                    cout << "当前栈顶元素为" << ch << endl;
                     while(ch != '('){
-                        //cout << "loop2";
-                        switch (ch) {
-                            case '&':
-                                joinerCharacterOperation();
-                                break;
-                            case '|':
-                                selectorCharacterOperation();
-                                break;
-                            default:
-                                break;
+                        //cout << "loop" << endl;
+                        if(ch == '&'){
+                            cout << "栈顶元素为连接符，需要先进行连接符的计算" << endl;
+                            joinerCharacterOperation();
+                        } else{
+                            break;
                         }
                         ch = operatorStack.top();
                     }
-                    cout << "顶部符号" << ch << endl;
-                    operatorStack.pop();//此时运算符栈顶元素是左括号，需要移除出去
-                    //如果下一个字符是字母或者是左括号，需要添加连接符
-                    if((i+1<strLen)&&(regxInput[i+1] == ')' || !isOperator(regxInput[i+1]))){
-                        operatorStack.push('&');
-                    }
-                    break;
+                }
 
-                default:
-                    cout << "ok" << ch << endl;
-                    break;
+                operatorStack.push('|');
+                cout<<"将选择符压入栈中"<<endl;
+                break;
+            case '('://左括号
+                operatorStack.push(ch);
+                cout << "将左括号压入栈中" << endl;
+                cout << "当前符号栈大小" << operatorStack.size() << endl;
+                break;
+            case ')'://右括号
+                cout << "符号栈大小" << operatorStack.size() << endl;
+                //这里需要对括号内进行计算，并把计算结果压栈
+                ch = operatorStack.top();
+
+                while(ch != '('){
+                    //cout << "loop2";
+                    switch (ch) {
+                    case '&':
+                        joinerCharacterOperation();
+                        break;
+                    case '|':
+                        selectorCharacterOperation();
+                        break;
+                    default:
+                        break;
+                    }
+                    ch = operatorStack.top();
+                }
+                cout << "顶部符号" << ch << endl;
+                operatorStack.pop();//此时运算符栈顶元素是左括号，需要移除出去
+                //如果下一个字符是字母或者是左括号，需要添加连接符
+                if((i+1<strLen)&&(regxInput[i+1] == ')' || !isOperator(regxInput[i+1]))){
+                    operatorStack.push('&');
+                }
+                break;
+
+            default:
+                cout << "ok" << ch << endl;
+                break;
             }
         }else{//不是运算符
             auto flag = true;//是否添加到字母表中
@@ -351,14 +371,14 @@ void Lex::getNFA(string regxInput){
         ch= operatorStack.top();
         cout << "当前的运算符栈顶元素为" << ch << endl;
         switch (ch) {
-            case '|':
-                selectorCharacterOperation();
-                break;
-            case '&':
-                joinerCharacterOperation();
-                break;
-            default:
-                break;
+        case '|':
+            selectorCharacterOperation();
+            break;
+        case '&':
+            joinerCharacterOperation();
+            break;
+        default:
+            break;
         }
     }
 
@@ -624,6 +644,7 @@ string Lex::generateNFADotString(MyGraph myGraph){
     ofile.close();
     //执行生成nfa图片
     system("/usr/local/bin/dot -Tjpg ../../../../lexical/dots/nfa.dot -o ../../../../lexical/images/nfa.jpg");//调用QT里的函数
+    appendToResultBox(result);
     cout << result << endl;
     return  result;
 
@@ -669,7 +690,7 @@ string Lex::generateDFADotString(MyGraph myGraph,int choice){
     result.append("}");
     ofstream ofile;//定义输出文件
     if (choice == 0){
-        system("pwd");
+        //system("pwd");
         ofile.open("../../../../lexical/dots/dfa.dot");
     }else{
         ofile.open("../../../../lexical/dots/mindfa.dot");
@@ -682,6 +703,7 @@ string Lex::generateDFADotString(MyGraph myGraph,int choice){
     }else{
         system("/usr/local/bin/dot -Tjpg ../../../../lexical/dots/mindfa.dot -o ../../../../lexical/images/mindfa.jpg");//调用QT里的函数
     }
+    appendToResultBox(result);
     cout << result << endl;
     return result;
 
@@ -907,3 +929,11 @@ bool Lex::isInDFAEndStatus(int i){
     }
     return false;
 };
+
+void Lex::insetIntoResultBox(string content){
+    resultBrowser->textCursor().insertText(QString::fromStdString(content));
+}
+
+void Lex::appendToResultBox(string content){
+    resultBrowser->append(QString::fromStdString(content));
+}

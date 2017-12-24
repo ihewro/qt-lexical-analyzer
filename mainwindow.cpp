@@ -25,11 +25,16 @@ MainWindow::~MainWindow()
 void MainWindow::on_pushButton_clicked()
 {
     Lex lexTest;
+    lexTest.resultBrowser = ui->outputField;//赋值
+    ui->outputField->clear();
+
     string regxInput = ui->regxText->text().toStdString();
     fillContentToOutputFeiled("正则表达式为：" + regxInput);
     lexTest.getNFA(regxInput);
     cout << "————————————————————————————————————————结果显示——————————————————————————————————————————" << endl;
+    fillContentToOutputFeiled("————————————————————————————————————————结果显示——————————————————————————————————————————" );
     cout << "最终的NFA栈的节点数目为"<< lexTest.lexNFA.NFAGraph.mVexNum << endl;
+    fillContentToOutputFeiled("最终的NFA栈的节点数目为" + to_string(lexTest.lexNFA.NFAGraph.mVexNum));
     cout << "边的数目为"  << lexTest.lexNFA.NFAGraph.mEdgeNum << endl;
     cout << "字母表为：";
     for(int i =0;i<lexTest.alphabet.size();i++){
@@ -52,12 +57,19 @@ void MainWindow::on_pushButton_clicked()
     lexTest.printDFA();
 
     cout << "————————————————DFA节点输出——————————————" << endl;
+    fillContentToOutputFeiled("————————————————DFA节点输出——————————————");
     for(int i =0;i<lexTest.lexDFA.mVexs.size();i++){
+        string tempString = "";
         for (int j = 0; j < lexTest.lexDFA.mVexs[i].size() ; ++j) {
             cout << lexTest.lexDFA.mVexs[i][j] << " ";
+            tempString += to_string(lexTest.lexDFA.mVexs[i][j]) + " ";
         }
+
+        fillContentToOutputFeiled(tempString);
+
         cout << endl;
     }
+
 
     cout << "DFA节点数目" << lexTest.lexDFA.DFAGraph.mVexNum << "边的数目" << lexTest.lexDFA.DFAGraph.mEdgeNum << endl;
 
@@ -109,5 +121,13 @@ void MainWindow::on_action_about_triggered()
 {
     //打开关于对话框
     QMessageBox::about(this,"关于","生成NFA、DFA、最小化DFA的可视化工具");
+
+}
+
+void MainWindow::on_pushButton_5_clicked()
+{
+    ui->outputField->clear();
+    ui->textBrowser->clear();
+    ui->regxText->clear();
 
 }
