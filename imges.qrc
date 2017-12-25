@@ -3,5 +3,6 @@
         <file>images/dfa.jpg</file>
         <file>images/nfa.jpg</file>
         <file>images/about.png</file>
+        <file>images/mindfa.jpg</file>
     </qresource>
 </RCC>

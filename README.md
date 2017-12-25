@@ -40,6 +40,14 @@ brew install Graphviz
 * windows: <https://graphviz.gitlab.io/_pages/Download/Download_windows.html>
 
 
+  * 下载zip 解压包，解压文件夹比如：`graphviz-2.38`。具体目录路径为`C:\Users\hewro\download\graphviz-2.38`，则dot命令的路径为`C:\Users\hewro\download\graphviz-2.38\release\bin\dot`
+  * 将lex.h文件中的dot常量值修改为该值即可。
+
 **关于code分支：**
 
 该分支为无界面画图的代码，是在Clion的IDE下编译运行通过，你也可以尝试编译运行这份代码。
+
+
+
+
+

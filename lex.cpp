@@ -10,7 +10,6 @@
 
 using namespace std;
 
-Lex::Lex() = default;
 
 /**
  * @brief Lex::isOperator 判断是否是运算符
@@ -639,12 +638,15 @@ string Lex::generateNFADotString(MyGraph myGraph){
     result.append("}");
 
     ofstream ofile;               //定义输出文件
-    ofile.open("../../../../lexical/dots/nfa.dot");
+    ofile.open(projectFile + "/dots/nfa.dot");
+
     ofile << result << endl;
     ofile.close();
     //执行生成nfa图片
 
-    string temp = dot + " -Tjpg ../../../../lexical/dots/nfa.dot -o ../../../../lexical/images/nfa.jpg";
+    cout << "dotFile" << projectFile << endl;
+
+    string temp = dot + " -Tjpg " + projectFile +"/dots/nfa.dot -o ../../../../lexical/images/nfa.jpg";
     const char *systemString = temp.c_str();
 
     cout << "命令行为" + temp << endl;
@@ -696,20 +698,26 @@ string Lex::generateDFADotString(MyGraph myGraph,int choice){
     }
     result.append("}");
     ofstream ofile;//定义输出文件
+    string filePath;
     if (choice == 0){
         //system("pwd");
-        ofile.open("../../../../lexical/dots/dfa.dot");
+        filePath = projectFile + "/dots/dfa.dot";
     }else{
-        ofile.open("../../../../lexical/dots/mindfa.dot");
+        filePath = projectFile + "/dots/mindfa.dot";
     }
+    const char *FilePathChar = filePath.c_str();
+
+    cout << "打开文件路径" << FilePathChar << endl;
+    ofile.open(FilePathChar);
+
     ofile << result << endl;
     ofile.close();
     //执行生成dfa图片
     string temp;
     if (choice == 0){
-        temp = dot + " -Tjpg ../../../../lexical/dots/dfa.dot -o ../../../../lexical/images/dfa.jpg";
+        temp = dot + " -Tjpg " + projectFile + "/dots/dfa.dot -o ../../../../lexical/images/dfa.jpg";
     }else{
-        temp = dot + " -Tjpg ../../../../lexical/dots/mindfa.dot -o ../../../../lexical/images/mindfa.jpg";
+        temp = dot + " -Tjpg " + projectFile + "/dots/mindfa.dot -o ../../../../lexical/images/mindfa.jpg";
     }
     const char *systemString = temp.c_str();
 
@@ -762,7 +770,7 @@ void Lex::minimizeDFA() {
     vector<int> endPointArray(lexDFA.endStatus);
 
     /*stack<int>noEndDFAStack;//DFA的非终止状态栈
-       stack<int> endDFAStack;//终止状态的栈*/
+    stack<int> endDFAStack;//终止状态的栈*/
     cout << "非终止状态集合" << endl;
     for (int i = 1; i < lexDFA.mVexs.size(); ++i) {
         if (!isInDFAEndStatus(i)){
@@ -798,7 +806,7 @@ void Lex::minimizeDFA() {
             }
 
             for (int i = 0; i < alphabet.size() ; ++i) {
-                cout << "——————————当前操作的集合为——————————" <<endl;
+                cout << "——————————当前操作的集合的位置为" << j << "集合大小为" << dividedArrays.size()  << "——————————" <<endl;
                 for (int m = 0; m < dividedArrays[j].first.size(); ++m) {
                     cout << dividedArrays[j].first[m] << " ";
                 }
@@ -816,34 +824,44 @@ void Lex::minimizeDFA() {
 
                     cout << dividedArrays[j].first[k] << "转换结果所属于的集合序号" + to_string(statusInArrayNum) << endl;
 
-                    /*if(statusInArrayNum == -1){//必须进行划分，这个时候虽然没有转换结果，所以需要将集合序号人为设置一个唯一的数
-                           statusInArrayNum = -1;
-                       }*/
-
-                    if (!isContain(statusInArrayNum,arrayNumVector)){//防止集合序号的重复
-                        arrayNumVector.push_back(statusInArrayNum);//将集合序号加入到集合序号数组中
+                    if(statusInArrayNum == -1){//必须进行划分，这个时候虽然没有转换结果，所以需要将集合序号人为设置一个唯一的数
+                        statusInArrayNum = -1;
+                        arrayNumVector.push_back(statusInArrayNum);
+                    }else{
+                        if (!isContain(statusInArrayNum,arrayNumVector)){//防止集合序号的重复
+                            arrayNumVector.push_back(statusInArrayNum);//将集合序号加入到集合序号数组中
+                        }
                     }
                     statusMap.emplace_back(statusInArrayNum,dividedArrays[j].first[k]);//将集合序号————对于的DFA状态组压入
                 }
 
                 if (arrayNumVector.size() == 1){
+                    cout << "当前集合序号" << j << "canNotBeDivided加1" <<endl;
                     canNotBeDivided ++ ;
 
                     continue;
                 }else{
                     cout << "\n*******该集合需要划分*******\n"<< endl;
 
+                    cout << "不同的状态个数为" << arrayNumVector.size() << endl;
+                    for (int m = 0; m < arrayNumVector.size(); ++m) {
+                        cout << arrayNumVector[m] << " ";
+                    }
+                    cout << endl;
                     cout << "划分的集合为：" << endl;
                     for (int l = 0; l <  arrayNumVector.size(); ++l) {//进行划分
                         cout << "第" << l + 1 << "个划分的子集为" << endl;
                         vector<int> tempArray;
                         for (int k = 0; k < statusMap.size(); ++k) {
-                            if (statusMap[k].first == -1){//key为-1.说明是一定要划分的
+                            if (arrayNumVector[l] == -1 && statusMap[k].first == -1){//key为-1.说明是一定要划分的
                                 //删除该元素
                                 statusMap[k].first = -2;//-2代表删除状态
                                 tempArray.push_back(statusMap[k].second);
                                 cout << "该状态属于的集合序号为" << statusMap[k].first << "  ";
                                 cout << statusMap[k].second << endl ;
+                                //dividedArrays.emplace_back(tempArray, true);
+                                //tempArray.clear();
+                                break;
                             } else{
                                 if (statusMap[k].first == arrayNumVector[l]){//根据集合序号进行划分
                                     cout << "该状态属于的集合序号为" << statusMap[k].first << "   ";
@@ -859,7 +877,8 @@ void Lex::minimizeDFA() {
 
                     auto iter =  dividedArrays.begin()+j;
                     dividedArrays.erase(iter);
-                    //j--;
+                    j--;
+                    break;//当前集合结束，调到下一个位置的集合，因为删除了该元素，其他元素前移一位,所以j--
                 }
             }
             if (canNotBeDivided == alphabet.size()){
@@ -902,9 +921,8 @@ void Lex::minimizeDFA() {
 
 
 
-
-
 }
+
 
 /**
  * 获取DFA的目标节点

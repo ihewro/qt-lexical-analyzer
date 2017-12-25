@@ -17,6 +17,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void fillContentToOutputFeiled(string value);
+    QString getImageSrc(string fileName);
+    string projectFile;
 
 private slots:
     void on_pushButton_clicked();

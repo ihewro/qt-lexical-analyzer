@@ -15,8 +15,11 @@
 #include <stack>
 #include "mygraph.h"
 #include <QtWidgets/QTextBrowser>
+#include <QtGlobal>
+
 
 using namespace std;
+
 
 
 class NFA{
@@ -58,15 +61,31 @@ public:
 class Lex{
 public:
     const string dot  = "/usr/local/bin/dot";
+
     QTextBrowser *resultBrowser;//结果输出框
     NFA lexNFA;//NFA结构
     DFA lexDFA;//DFA结构
     stack <char> operatorStack;//操作符栈
     stack <node> NFAStatusPointStack;//NFA栈中的NFA的起始点序号，0的位置代表起点，1的位置代表终点
     vector<char> alphabet;//字母表，存储是正则表达式中的字母
-
+    string projectFile;
     //构造函数
-    Lex();
+    Lex(){
+
+#ifdef Q_OS_MAC
+// mac
+    projectFile = "../../../../lexical";
+#endif
+#ifdef Q_OS_LINUX
+// linux
+    projectFile = "../../lexical";
+#endif
+
+#ifdef _WIN64
+// win
+    projectFile = "../../lexical"
+#endif
+    }
 
     void insetIntoResultBox(string content);
     void appendToResultBox(string content);

@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <QProcess>
 #include <QMessageBox>
+#include <QDir>
+#include <QDebug>
 
 using namespace std;
 
@@ -14,12 +16,27 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+#ifdef Q_OS_MAC
+// mac
+    projectFile = "../../../../lexical";
+#endif
+#ifdef Q_OS_LINUX
+// linux
+    projectFile = "../../lexical";
+#endif
+
+#ifdef _WIN64
+// win
+    projectFile = "../../lexical"
+#endif
     ui->setupUi(this);
     ui->statusBar->showMessage("欢迎使用词法分析器",3000);
     QLabel *permanent = new QLabel(this);
     permanent->setFrameStyle(QFrame::Box|QFrame::Sunken);
     permanent->setText("北京化工大学 何炜");
     ui->statusBar->addPermanentWidget(permanent);
+    qDebug()<<"current applicationDirPath: "<<QCoreApplication::applicationDirPath() << endl;
+    qDebug()<<"current currentPath: "<<QDir::currentPath() << endl;
 }
 
 MainWindow::~MainWindow()
@@ -96,7 +113,7 @@ void MainWindow::on_export_nfa_button_clicked()
 {
     //加载图片
     QTextImageFormat format;
-    format.setName("../../../../lexical/images/nfa.jpg");
+    format.setName(getImageSrc("nfa.jpg"));
     ui->textBrowser->clear();
     ui->textBrowser->textCursor().insertImage(format);
 
@@ -107,7 +124,7 @@ void MainWindow::on_export_dfa_button_clicked()
 {
     //加载图片
     QTextImageFormat format;
-    format.setName("../../../../lexical/images/dfa.jpg");
+    format.setName(getImageSrc("dfa.jpg"));
     ui->textBrowser->clear();
     ui->textBrowser->textCursor().insertImage(format);
 }
@@ -116,7 +133,8 @@ void MainWindow::on_mini_dfa_button_clicked()
 {
     //输出最小化DFA
     QTextImageFormat format;
-    format.setName("../../../../lexical/images/mindfa.jpg");
+
+    format.setName(getImageSrc("mindfa.jpg"));
     ui->textBrowser->clear();
     ui->textBrowser->textCursor().insertImage(format);
 
@@ -128,6 +146,13 @@ void MainWindow::on_action_about_triggered()
     QMessageBox::about(this,"关于","生成NFA、DFA、最小化DFA的可视化工具");
 
 }
+
+QString MainWindow::getImageSrc(string fileName){
+    string resultString = projectFile + "/images/" + fileName;
+    cout << "当前图片路径为" << resultString << endl;
+    return QString::fromStdString(resultString);
+}
+
 
 void MainWindow::on_pushButton_5_clicked()
 {
