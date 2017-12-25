@@ -5,10 +5,10 @@
 
 ## 编译环境
 
-语言： c++ 11
-IDE：qt creator、 CLion
-界面库：qt、GraphViz
-开发平台：mac下开发，Windows下未做测试 
+* 语言： c++ 11
+* IDE：qt creator、 CLion
+* 界面库：qt、GraphViz
+* 开发平台：mac下开发，Windows下未做测试 
 
 
 ## 运行
@@ -29,7 +29,7 @@ IDE：qt creator、 CLion
 
 
 
-关于[Graphviz下载安装方法](https://graphviz.gitlab.io/download/)：
+**关于[Graphviz下载安装方法](https://graphviz.gitlab.io/download/)：**
 
 * mac：如果你安装了homeBrew，直接终端输入安装命令
 
@@ -39,3 +39,7 @@ brew install Graphviz
 
 * windows: <https://graphviz.gitlab.io/_pages/Download/Download_windows.html>
 
+
+**关于code分支：**
+
+该分支为无界面画图的代码，是在Clion的IDE下编译运行通过，你也可以尝试编译运行这份代码。
