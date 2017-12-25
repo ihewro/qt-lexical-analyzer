@@ -57,6 +57,7 @@ public:
 };
 class Lex{
 public:
+    const string dot  = "/usr/local/bin/dot";
     QTextBrowser *resultBrowser;//结果输出框
     NFA lexNFA;//NFA结构
     DFA lexDFA;//DFA结构

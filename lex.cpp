@@ -331,7 +331,7 @@ void Lex::getNFA(string regxInput){
                 cout << "顶部符号" << ch << endl;
                 operatorStack.pop();//此时运算符栈顶元素是左括号，需要移除出去
                 //如果下一个字符是字母或者是左括号，需要添加连接符
-                if((i+1<strLen)&&(regxInput[i+1] == ')' || !isOperator(regxInput[i+1]))){
+                if((i+1<strLen)&&(regxInput[i+1] == '(' || !isOperator(regxInput[i+1]))){
                     operatorStack.push('&');
                 }
                 break;
@@ -643,7 +643,12 @@ string Lex::generateNFADotString(MyGraph myGraph){
     ofile << result << endl;
     ofile.close();
     //执行生成nfa图片
-    system("/usr/local/bin/dot -Tjpg ../../../../lexical/dots/nfa.dot -o ../../../../lexical/images/nfa.jpg");//调用QT里的函数
+
+    string temp = dot + " -Tjpg ../../../../lexical/dots/nfa.dot -o ../../../../lexical/images/nfa.jpg";
+    const char *systemString = temp.c_str();
+
+    cout << "命令行为" + temp << endl;
+    system(systemString);//调用QT里的函数
     appendToResultBox(result);
     cout << result << endl;
     return  result;
@@ -698,11 +703,17 @@ string Lex::generateDFADotString(MyGraph myGraph,int choice){
     ofile << result << endl;
     ofile.close();
     //执行生成dfa图片
+    string temp;
     if (choice == 0){
-        system("/usr/local/bin/dot -Tjpg ../../../../lexical/dots/dfa.dot -o ../../../../lexical/images/dfa.jpg");//调用QT里的函数
+        temp = dot + " -Tjpg ../../../../lexical/dots/dfa.dot -o ../../../../lexical/images/dfa.jpg";
     }else{
-        system("/usr/local/bin/dot -Tjpg ../../../../lexical/dots/mindfa.dot -o ../../../../lexical/images/mindfa.jpg");//调用QT里的函数
+        temp = dot + " -Tjpg ../../../../lexical/dots/mindfa.dot -o ../../../../lexical/images/mindfa.jpg";
     }
+    const char *systemString = temp.c_str();
+
+    cout << "命令行为" + temp << endl;
+
+    system(systemString);
     appendToResultBox(result);
     cout << result << endl;
     return result;
@@ -774,11 +785,7 @@ void Lex::minimizeDFA() {
 
         for (int j = 0; j < dividedArrays.size(); ++j) {//对划分的每个集合进行操作
 
-            cout << "——————————当前操作的集合为——————————" <<endl;
-            for (int m = 0; m < dividedArrays[j].first.size(); ++m) {
-                cout << dividedArrays[j].first[m] << " ";
-            }
-            cout << endl;
+
 
             int canNotBeDivided = 0;//经过一次字母表的转换，如果该集合的转换状态只有一个，说明该集合不能被该字母区分，该变量+1
 
@@ -788,6 +795,13 @@ void Lex::minimizeDFA() {
             }
 
             for (int i = 0; i < alphabet.size() ; ++i) {
+                cout << "——————————当前操作的集合为——————————" <<endl;
+                for (int m = 0; m < dividedArrays[j].first.size(); ++m) {
+                    cout << dividedArrays[j].first[m] << " ";
+                }
+                cout << endl;
+
+                cout << "当前转换的字母为" << alphabet[i] << endl;
 
                 vector<int> arrayNumVector;//存放DFA状态经过某个字母转换到的集合序号的数组
 
@@ -832,7 +846,7 @@ void Lex::minimizeDFA() {
 
                     auto iter =  dividedArrays.begin()+j;
                     dividedArrays.erase(iter);
-                    j--;
+                    //j--;
                 }
             }
             if (canNotBeDivided == alphabet.size()){

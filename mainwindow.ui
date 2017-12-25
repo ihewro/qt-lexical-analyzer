@@ -64,29 +64,7 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <widget class="QPushButton" name="export_nfa_button">
-          <property name="text">
-           <string>输出NFA</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="export_dfa_button">
-          <property name="text">
-           <string>输出DFA</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="mini_dfa_button">
-          <property name="text">
-           <string>输出最小化DFA</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <layout class="QVBoxLayout" name="verticalLayout_2"/>
       </item>
      </layout>
     </item>
@@ -133,15 +111,52 @@ p, li { white-space: pre-wrap; }
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="action_about"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QDockWidget" name="dockWidget">
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QPushButton" name="export_nfa_button">
+       <property name="text">
+        <string>输出NFA</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="export_dfa_button">
+       <property name="text">
+        <string>输出DFA</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="mini_dfa_button">
+       <property name="text">
+        <string>输出最小化DFA</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="action_about">
+   <property name="icon">
+    <iconset resource="imges.qrc">
+     <normaloff>:/image/images/about.png</normaloff>:/image/images/about.png</iconset>
+   </property>
    <property name="text">
     <string>关于</string>
    </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="imges.qrc"/>
+ </resources>
  <connections/>
 </ui>

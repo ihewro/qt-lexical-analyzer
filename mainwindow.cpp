@@ -15,6 +15,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->statusBar->showMessage("欢迎使用词法分析器",3000);
+    QLabel *permanent = new QLabel(this);
+    permanent->setFrameStyle(QFrame::Box|QFrame::Sunken);
+    permanent->setText("北京化工大学 何炜");
+    ui->statusBar->addPermanentWidget(permanent);
 }
 
 MainWindow::~MainWindow()
