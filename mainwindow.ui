@@ -121,25 +121,29 @@ p, li { white-space: pre-wrap; }
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QPushButton" name="export_nfa_button">
-       <property name="text">
-        <string>输出NFA</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="export_dfa_button">
-       <property name="text">
-        <string>输出DFA</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="mini_dfa_button">
-       <property name="text">
-        <string>输出最小化DFA</string>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QPushButton" name="export_nfa_button">
+         <property name="text">
+          <string>输出NFA</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="export_dfa_button">
+         <property name="text">
+          <string>输出DFA</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="mini_dfa_button">
+         <property name="text">
+          <string>输出最小化DFA</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </widget>
