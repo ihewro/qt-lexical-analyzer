@@ -6,7 +6,7 @@
 int main() {
     std::cout << "Hello, World!" << std::endl;
 
-   string regxInput = "(a|b)*";
+   string regxInput = "a(a|b)*b";
     Lex lexTest;
     lexTest.getNFA(regxInput);
     cout << "！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！潤惚�塋勝�！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！" << endl;

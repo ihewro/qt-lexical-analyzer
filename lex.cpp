@@ -368,7 +368,7 @@ void Lex::getNFA(string regxInput){
 
 void Lex::getDFA() {
 
-    //给DFA节点开头位置加一个空元素占位
+    //给DFA节点开头位置加一个空元素占位，因为节点序号是和位置对应的，而节点序号是从1开始的。
     lexDFA.mVexs.emplace_back(0);
 
     vector<int> initStatus;
@@ -753,7 +753,10 @@ void Lex::minimizeDFA() {
 
         for (int j = 0; j < dividedArrays.size(); ++j) {//对划分的每个集合进行操作
 
-
+            cout << "——————————当前操作的集合的位置为" << j << "集合大小为" << dividedArrays.size()  << "——————————" <<endl;
+            for (int m = 0; m < dividedArrays[j].first.size(); ++m) {
+                cout << dividedArrays[j].first[m] << " ";
+            }
             cout << endl;
 
             int canNotBeDivided = 0;//经过一次字母表的转换，如果该集合的转换状态只有一个，说明该集合不能被该字母区分，该变量+1
@@ -764,10 +767,6 @@ void Lex::minimizeDFA() {
             }
 
             for (int i = 0; i < alphabet.size() ; ++i) {
-                cout << "——————————当前操作的集合为——————————" <<endl;
-                for (int m = 0; m < dividedArrays[j].first.size(); ++m) {
-                    cout << dividedArrays[j].first[m] << " ";
-                }
 
                 cout << "当前字母为" << alphabet[i] << endl;
                 vector<int> arrayNumVector;//存放DFA状态经过某个字母转换到的集合序号的数组
@@ -780,32 +779,54 @@ void Lex::minimizeDFA() {
 
                     int statusInArrayNum = getContainPosition(transStatus,dividedArrays);//转换状态属于的集合序号
 
-                    if(statusInArrayNum == -1){//必须进行划分，这个时候虽然没有转换结果，所以需要将集合序号人为设置一个唯一的数
-                        statusInArrayNum = static_cast<int>(statusMap.size() + 1);
-                    }
+                    cout << dividedArrays[j].first[k] << "转换结果所属于的集合序号" + to_string(statusInArrayNum) << endl;
 
-                    if (!isContain(statusInArrayNum,arrayNumVector)){//防止集合序号的重复
-                        arrayNumVector.push_back(statusInArrayNum);//将集合序号加入到集合序号数组中
+                    if(statusInArrayNum == -1){//必须进行划分，这个时候虽然没有转换结果，所以需要将集合序号人为设置一个唯一的数
+                        statusInArrayNum = -1;
+                        arrayNumVector.push_back(statusInArrayNum);
+                    }else{
+                        if (!isContain(statusInArrayNum,arrayNumVector)){//防止集合序号的重复
+                            arrayNumVector.push_back(statusInArrayNum);//将集合序号加入到集合序号数组中
+                        }
                     }
                     statusMap.emplace_back(statusInArrayNum,dividedArrays[j].first[k]);//将集合序号————对于的DFA状态组压入
                 }
 
                 if (arrayNumVector.size() == 1){
+                    cout << "当前集合序号" << j << "canNotBeDivided加1" <<endl;
                     canNotBeDivided ++ ;
 
                     continue;
                 }else{
                     cout << "\n*******该集合需要划分*******\n"<< endl;
 
+                    cout << "不同的状态个数为" << arrayNumVector.size() << endl;
+                    for (int m = 0; m < arrayNumVector.size(); ++m) {
+                        cout << arrayNumVector[m] << " ";
+                    }
+                    cout << endl;
                     cout << "划分的集合为：" << endl;
                     for (int l = 0; l <  arrayNumVector.size(); ++l) {//进行划分
                         cout << "第" << l + 1 << "个划分的子集为" << endl;
                         vector<int> tempArray;
                         for (int k = 0; k < statusMap.size(); ++k) {
-                            if (statusMap[k].first == arrayNumVector[l]){//根据集合序号进行划分
+                            if (arrayNumVector[l] == -1 && statusMap[k].first == -1){//key为-1.说明是一定要划分的
+                                //删除该元素
+                                statusMap[k].first = -2;//-2代表删除状态
                                 tempArray.push_back(statusMap[k].second);
-                                cout << statusMap[k].second << " " ;
+                                cout << "该状态属于的集合序号为" << statusMap[k].first << "  ";
+                                cout << statusMap[k].second << endl ;
+                                //dividedArrays.emplace_back(tempArray, true);
+                                //tempArray.clear();
+                                break;
+                            } else{
+                                if (statusMap[k].first == arrayNumVector[l]){//根据集合序号进行划分
+                                    cout << "该状态属于的集合序号为" << statusMap[k].first << "   ";
+                                    tempArray.push_back(statusMap[k].second);
+                                    cout << statusMap[k].second << endl ;
+                                }
                             }
+
                         }
                         cout << endl;
                         dividedArrays.emplace_back(tempArray, true);
@@ -813,7 +834,8 @@ void Lex::minimizeDFA() {
 
                     auto iter =  dividedArrays.begin()+j;
                     dividedArrays.erase(iter);
-                    //j--;
+                    j--;
+                    break;//当前集合结束，调到下一个位置的集合，因为删除了该元素，其他元素前移一位,所以j--
                 }
             }
             if (canNotBeDivided == alphabet.size()){
