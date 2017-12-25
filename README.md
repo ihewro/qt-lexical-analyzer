@@ -13,7 +13,7 @@
 
 ## 运行
 
-1. 下载源码
+1. 下载源码，项目文件夹命名为`lexical`，一定要重命名，因为涉及到相对路径的问题
 2. 使用qtCreator 打开项目文件夹
 3. 下载[graphviz绘图软件](https://graphviz.gitlab.io/download/)
 4. 修改lex.h文件中的`dot`常量，该常量为你的系统中dot命令的位置。如果是mac系统，你可以通过 which dot 查看具体位置。
