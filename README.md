@@ -8,7 +8,7 @@
 * 语言： c++ 11
 * IDE：qt creator、 CLion
 * 界面库：qt、GraphViz
-* 开发平台：mac下开发，Windows下未做测试 
+* 开发平台：mac下开发，windows 已经做了编译调试成功
 
 
 ## 运行
@@ -40,7 +40,7 @@ brew install Graphviz
 * windows: <https://graphviz.gitlab.io/_pages/Download/Download_windows.html>
 
 
-  * 下载zip 解压包，解压文件夹比如：`graphviz-2.38`。具体目录路径为`C:\Users\hewro\download\graphviz-2.38`，则dot命令的路径为`C:\Users\hewro\download\graphviz-2.38\release\bin\dot`
+  * 下载zip 解压包，解压文件夹比如：`graphviz-2.38`。具体目录路径为`C:\Users\hewro\download\graphviz-2.38`，则dot命令的路径为`C:\\Users\\hewro\\download\\graphviz-2.38\\release\\bin\\dot`(一定要转义反斜杠否则会报错)
   * 将lex.h文件中的dot常量值修改为该值即可。
 
 **关于code分支：**

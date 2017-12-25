@@ -646,7 +646,7 @@ string Lex::generateNFADotString(MyGraph myGraph){
 
     cout << "dotFile" << projectFile << endl;
 
-    string temp = dot + " -Tjpg " + projectFile +"/dots/nfa.dot -o ../../../../lexical/images/nfa.jpg";
+    string temp = dot + " -Tjpg " + projectFile +"/dots/nfa.dot -o " + projectFile + "/images/nfa.jpg";
     const char *systemString = temp.c_str();
 
     cout << "命令行为" + temp << endl;
