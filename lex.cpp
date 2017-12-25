@@ -157,8 +157,8 @@ void Lex::joinerCharacterOperation(){
     for(int i =1;i<lexNFA.NFAGraph.mVexNum + 1;i++){
         if (i == top1NFA[0]){
             for (int j = 1; j <lexNFA.NFAGraph.mVexNum + 1 ; ++j) {
-                if (lexNFA.NFAGraph.getEdgeValue(i,j) != '^'){
-                    lexNFA.NFAGraph.addEdge(top2NFA[1],j,lexNFA.NFAGraph.getEdgeValue(i,j));
+                if (lexNFA.NFAGraph.getEdgeValue(i,j).at(0) != '^'){
+                    lexNFA.NFAGraph.addEdge(top2NFA[1],j,lexNFA.NFAGraph.getEdgeValue(i,j).at(0));
                     lexNFA.NFAGraph.deleteEdge(top1NFA[0],j);
                     lexNFA.NFAGraph.mVexNum --;//节点数减1
                     lexNFA.mVexs[top1NFA[0]] = -1;
@@ -505,7 +505,7 @@ vector<int> Lex::e_closure(vector<int> statusArray){
         for (int i = 1; i < lexNFA.mVexs.size() + 1 ; ++i) {
             if (i == status){
                 for(int j = 1;j<lexNFA.mVexs.size()+1;j++){
-                    if (lexNFA.NFAGraph.getEdgeValue(i,j) == 'E'){//找到转移条件为E的的终点
+                    if (lexNFA.NFAGraph.getEdgeValue(i,j).at(0) == 'E'){//找到转移条件为E的的终点
                         statusStack.push(j);//加入到状态栈中
                         resultsArray.push_back(j);//加入到结果数组中
                     }
@@ -558,7 +558,7 @@ vector<int> Lex::nfaMove(vector<int> statusArray,char condition){
         for (int i = 1; i <lexNFA.mVexs.size()+1 ; ++i) {
             if (i == status){
                 for (int j = 1; j < lexNFA.mVexs.size() + 1; ++j) {
-                    if (lexNFA.NFAGraph.getEdgeValue(i,j) == condition){
+                    if (lexNFA.NFAGraph.getEdgeValue(i,j).at(0) == condition){
                         resultsArray.push_back(j);//把终点加入到结果集合中，但此时不需要再将终点压入到状态栈中
                     }
                 }
@@ -586,8 +586,8 @@ void Lex::printNFA(){
     //cout << "节点数目" << num;
     for(int i = 1 ;i<num  ;i ++){
         for(int j = 1;j<num;j++){
-            if (lexNFA.NFAGraph.getEdgeValue(i,j) != '^'){
-                cout << "状态" << i << " —— " << lexNFA.NFAGraph.getEdgeValue(i,j) << " ——> " << "状态" << j << endl;
+            if (lexNFA.NFAGraph.getEdgeValue(i,j).at(0) != '^'){
+                cout << "状态" << i << " —— " << lexNFA.NFAGraph.getEdgeValue(i,j).at(0) << " ——> " << "状态" << j << endl;
             }
         }
     }
@@ -599,8 +599,8 @@ void Lex::printDFA(){
     //cout << "节点数目" << num;
     for(int i = 0 ;i<num  ;i ++){
         for(int j = 0;j<num;j++){
-            if (lexDFA.DFAGraph.getEdgeValue(i,j) != '^'){
-                cout << "状态" << i << " —— " << lexDFA.DFAGraph.getEdgeValue(i,j) << " ——> " << "状态" << j << endl;
+            if (lexDFA.DFAGraph.getEdgeValue(i,j).at(0) != '^'){
+                cout << "状态" << i << " —— " << lexDFA.DFAGraph.getEdgeValue(i,j).at(0) << " ——> " << "状态" << j << endl;
             }
         }
     }
@@ -631,8 +631,8 @@ string Lex::generateNFADotString(MyGraph myGraph){
     //cout << "节点数目" << num;
     for(int i = 1 ;i<num  ;i ++){
         for(int j = 1;j<num;j++){
-            if (myGraph.getEdgeValue(i,j) != '^'){
-                result += tab + "\"" +to_string(i) + "\"" + " -> " + to_string(j) + "[label=\"" + myGraph.getEdgeValue(i,j) + "\"]\n";
+            if (myGraph.getEdgeValue(i,j).at(0) != '^'){
+                result += tab + "\"" +to_string(i) + "\"" + " -> " + to_string(j) + "[label=\"" + myGraph.getEdgeValue(i,j).at(0) + "\"]\n";
             }
         }
     }
@@ -687,8 +687,10 @@ string Lex::generateDFADotString(MyGraph myGraph,int choice){
     //cout << "节点数目" << num;
     for(int i = 0 ;i<num  ;i ++){
         for(int j = 0;j<num;j++){
-            if (myGraph.getEdgeValue(i,j) != '^'){
-                result += tab + "\"" +to_string(i) + "\"" + " -> \"" + to_string(j) + "\"[label=\"" + myGraph.getEdgeValue(i,j) + "\"]\n";
+            if (myGraph.getEdgeValue(i,j).at(0) != '^'){
+                for (int k = 0; k <myGraph.getEdgeValue(i,j).size() ; ++k) {
+                    result += tab + "\"" +to_string(i) + "\"" + " -> \"" + to_string(j) + "\"[label=\"" + myGraph.getEdgeValue(i,j).at(k) + "\"]\n";
+                }
             }
         }
     }
@@ -899,7 +901,7 @@ void Lex::minimizeDFA() {
  */
 int DFA::getTargetStatus(int node, char condition) {
     for (int i = 0; i < mVexs.size() ; ++i) {
-        if (DFAGraph.getEdgeValue(node,i) == condition){
+        if (DFAGraph.getEdgeValue(node,i).at(0) == condition){
             return i;
         }
     }
@@ -911,11 +913,11 @@ void Lex::mergeTwoNode(int a,int b){
     for (int i = 1; i < lexDFA.mVexs.size()+1 ; ++i) {
         if (i == b){
             for (int j = 1; j < lexDFA.mVexs.size()+1 ; ++j) {
-                if (lexDFA.DFAGraph.getEdgeValue(b,j) != '^'){
+                if (lexDFA.DFAGraph.getEdgeValue(b,j).at(0) != '^'){
                     if (j == b){
-                        lexDFA.DFAGraph.addEdge(a,a,lexDFA.DFAGraph.getEdgeValue(b,j));
+                        lexDFA.DFAGraph.addEdge(a,a,lexDFA.DFAGraph.getEdgeValue(b,j).at(0));
                     } else{
-                        lexDFA.DFAGraph.addEdge(a,j,lexDFA.DFAGraph.getEdgeValue(b,j));
+                        lexDFA.DFAGraph.addEdge(a,j,lexDFA.DFAGraph.getEdgeValue(b,j).at(0));
                     }
                     lexDFA.DFAGraph.deleteEdge(b,j);
                     lexDFA.mVexs[b] = vector<int>();
@@ -923,8 +925,8 @@ void Lex::mergeTwoNode(int a,int b){
             }
         } else{
             for (int j = 1; j < lexDFA.mVexs.size() + 1; ++j) {
-                if (j == b && lexDFA.DFAGraph.getEdgeValue(i,b)!='^'){
-                    lexDFA.DFAGraph.addEdge(i,a,lexDFA.DFAGraph.getEdgeValue(i,b));
+                if (j == b && lexDFA.DFAGraph.getEdgeValue(i,b).at(0)!='^'){
+                    lexDFA.DFAGraph.addEdge(i,a,lexDFA.DFAGraph.getEdgeValue(i,b).at(0));
                     lexDFA.DFAGraph.deleteEdge(i,j);
                     lexDFA.mVexs[b] = vector<int>();
                     break;

@@ -2,6 +2,7 @@
 #define MYGRAPH_H
 
 #include<iostream>
+#include <vector>
 
 using namespace std;
 
@@ -15,7 +16,7 @@ public:
     int mVexNum;//顶点数目
     int mEdgeNum;//边的数目
     //顶点（所有状态）集合
-    char mMatrix[100][100];//邻接矩阵，对应的值为转移条件，就是字母，默认都是空''，表示未连接
+    vector<char> mMatrix[100][100];//邻接矩阵，对应的值为转移条件，就是字母，默认都是空''，表示未连接
 
 public:
     MyGraph();//默认构造函数
@@ -26,8 +27,11 @@ public:
     //根据位置增加一条边
     void addEdge(int a, int b, char edgeCondition);
     void deleteEdge(int a, int b);
+    void deleteEdge(int a, int b,char condition);
 
-    char getEdgeValue(int a ,int b);
+    vector<char> getEdgeValue(int a ,int b);
+
+
 };
 
 
