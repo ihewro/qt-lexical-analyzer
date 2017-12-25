@@ -22,12 +22,12 @@ MainWindow::MainWindow(QWidget *parent) :
 #endif
 #ifdef Q_OS_LINUX
 // linux
-    projectFile = "../../lexical";
+    projectFile = "../lexical";
 #endif
 
-#ifdef _WIN64
+#ifdef Q_OS_WIN
 // win
-    projectFile = "../../lexical"
+    projectFile = "../lexical";
 #endif
     ui->setupUi(this);
     ui->statusBar->showMessage("欢迎使用词法分析器",3000);

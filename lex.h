@@ -78,12 +78,12 @@ public:
 #endif
 #ifdef Q_OS_LINUX
 // linux
-    projectFile = "../../lexical";
+    projectFile = "../lexical";
 #endif
 
-#ifdef _WIN64
+#ifdef Q_OS_WIN
 // win
-    projectFile = "../../lexical"
+    projectFile = "../lexical";
 #endif
     }
 

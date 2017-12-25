@@ -715,9 +715,9 @@ string Lex::generateDFADotString(MyGraph myGraph,int choice){
     //执行生成dfa图片
     string temp;
     if (choice == 0){
-        temp = dot + " -Tjpg " + projectFile + "/dots/dfa.dot -o ../../../../lexical/images/dfa.jpg";
+        temp = dot + " -Tjpg " + projectFile + "/dots/dfa.dot -o " + projectFile + "/images/dfa.jpg";
     }else{
-        temp = dot + " -Tjpg " + projectFile + "/dots/mindfa.dot -o ../../../../lexical/images/mindfa.jpg";
+        temp = dot + " -Tjpg " + projectFile + "/dots/mindfa.dot -o " + projectFile + "/images/mindfa.jpg";
     }
     const char *systemString = temp.c_str();
 
